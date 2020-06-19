@@ -10,8 +10,7 @@ add_script_to_bash_profile(){
   if grep -Fiq "$THIS_FILE_NAME" $BASH_PROFILE_PATH; then
     :
   else
-    echo "\n" >> $BASH_PROFILE_PATH
-    echo "export PROMPT_COMMAND=\"\\\$(sh $THIS_FILE_PATH/$THIS_FILE_NAME)\"" >> $BASH_PROFILE_PATH
+    echo "\nexport PROMPT_COMMAND=\"\\\$(sh $THIS_FILE_PATH/$THIS_FILE_NAME)\"" >> $BASH_PROFILE_PATH
   fi
 }
 
