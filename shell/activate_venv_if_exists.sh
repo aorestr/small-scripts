@@ -23,7 +23,7 @@ add_script_to_bash_profile(){
   if grep -Fiq $THIS_FILE_NAME $BASH_PROFILE_PATH; then
     :
   else
-    echo "\nexport PROMPT_COMMAND=\"\\\$(sh $THIS_FILE_PATH/$THIS_FILE_NAME)\"" >> $BASH_PROFILE_PATH
+    echo "\nexport PROMPT_COMMAND=\"\\\$(sh $THIS_FILE_PATH/$THIS_FILE_NAME flag)\"" >> $BASH_PROFILE_PATH
     exec bash
   fi
 }
@@ -43,17 +43,21 @@ check_if_venv_exists_in_current_path(){
 }
 
 # Execution
-add_script_to_bash_profile
-venv_exists="$(check_if_venv_exists_in_current_path)"
-if [ "$(check_if_venv_is_activated)" = "1" ]; then
-  if [ "$venv_exists" = "0" ]; then
-    # Deactivate a venv 
-    echo "deactivate"
-  fi
+if [ -z "$1" ]; then
+  # This part of the code won't be ever run by bash on its own
+  add_script_to_bash_profile
 else
-  if [ "$venv_exists" = "1" ]; then
-    # Activate the venv
-    venv_path="$(dirname $(find ./ -name 'pyvenv.cfg' -exec readlink -f {} \;))"
-    echo "source $venv_path/bin/activate"
+  venv_exists="$(check_if_venv_exists_in_current_path)"
+  if [ "$(check_if_venv_is_activated)" = "1" ]; then
+    if [ "$venv_exists" = "0" ]; then
+      # Deactivate a venv 
+      echo "deactivate"
+    fi
+  else
+    if [ "$venv_exists" = "1" ]; then
+      # Activate the venv
+      venv_path="$(dirname $(find ./ -name 'pyvenv.cfg' -exec readlink -f {} \;))"
+      echo "source $venv_path/bin/activate"
+    fi
   fi
 fi
