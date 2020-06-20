@@ -3,14 +3,24 @@
 ## Global variables
 THIS_FILE_NAME="$(basename $0)"
 THIS_FILE_PATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-BASH_PROFILE_PATH="$HOME/.bash_profile"
+BASH_PROFILE_NAME=".bash_profile"
+BASH_PROFILE_PATH="$HOME/$BASH_PROFILE_NAME"
+BASHRC_PATH="$HOME/.bashrc"
 
 ## Functions
 add_script_to_bash_profile(){
+  # Create .bash_profile if it doesn't exist
   if [ ! -f $BASH_PROFILE_PATH ]; then
     touch $BASH_PROFILE_PATH
   fi
-  if grep -Fiq "$THIS_FILE_NAME" $BASH_PROFILE_PATH; then
+  # Add .bash_profile execution to .bashrc
+  if grep -Fiq $BASH_PROFILE_NAME $BASHRC_PATH; then
+    :
+  else
+    echo "\n# If it exists, run the bash_profile when opening a terminal\nif [ -f $BASH_PROFILE_PATH ]; then . $BASH_PROFILE_PATH; fi" >> $BASHRC_PATH
+  fi
+  # Export the command to run this script to the .bash_profile
+  if grep -Fiq $THIS_FILE_NAME $BASH_PROFILE_PATH; then
     :
   else
     echo "\nexport PROMPT_COMMAND=\"\\\$(sh $THIS_FILE_PATH/$THIS_FILE_NAME)\"" >> $BASH_PROFILE_PATH
